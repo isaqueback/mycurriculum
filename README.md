@@ -1,4 +1,5 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# mycurriculum
+It's a website made in Next.js to create curricum vitae.
 
 ## Getting Started
 
