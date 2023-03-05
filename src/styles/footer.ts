@@ -68,6 +68,8 @@ export const FooterContainer = styled.footer`
       font-size: 0.83rem;
 
       strong {
+        cursor: pointer;
+        
         &:hover {
           text-decoration: underline;
         }

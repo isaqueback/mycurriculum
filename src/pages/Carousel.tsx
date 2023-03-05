@@ -6,11 +6,18 @@ import 'swiper/css'
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 import 'swiper/css/autoplay'
+import { MutableRefObject } from 'react'
 
-export function Carousel() {
+interface CarouselProps {
+  presentation3Slider: MutableRefObject<null> | undefined
+  isPresentation3SliderVisible: boolean
+}
+
+export function Carousel(props: CarouselProps) {
   return (
-    <CarouselContainer>
+    <CarouselContainer isPresentation3SliderVisible={props.isPresentation3SliderVisible} presentation3Slider={props.presentation3Slider}>
       <Swiper
+        ref={props.presentation3Slider}
         effect={'coverflow'}
         grabCursor={true}
         centeredSlides={true}

@@ -1,6 +1,11 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-export const HeaderContainer = styled.header`
+interface HeaderContainerProps {
+  isHeaderLogoVisible: boolean
+  isHeaderNavVisible: boolean
+}
+
+export const HeaderContainer = styled.header<HeaderContainerProps>`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -12,6 +17,17 @@ export const HeaderContainer = styled.header`
     align-items: center;
     gap: 0.625rem;
     text-decoration: none;
+    opacity: ${({ isHeaderLogoVisible }) => {
+    return (
+      isHeaderLogoVisible ? css`1` : css`0`
+    )
+  }};
+    transform: ${({ isHeaderLogoVisible }) => {
+    return (
+      isHeaderLogoVisible ? css`translateX(0px)` : css`translateX(-50px)`
+    )
+  }};
+    transition: all 400ms ease-out, transform 400ms cubic-bezier(0,1.06,.21,1.44);
 
     svg {
       fill: ${(props) => props.theme['red-400']};
@@ -28,6 +44,18 @@ export const HeaderContainer = styled.header`
 
   nav {
     display: none;
+    transition: all 300ms ease-out;
+    opacity: ${({ isHeaderNavVisible }) => {
+    return (
+      isHeaderNavVisible ? css`1` : css`0`
+    )
+  }};
+    transform: ${({ isHeaderNavVisible }) => {
+    return (
+      isHeaderNavVisible ? css`translateY(0px)` : css`translateY(-30px)`
+    )
+  }};
+    transition: all 400ms ease-out, transform 400ms cubic-bezier(0,1.06,.21,1.44);
   }
 
   @media (min-width: 768px) {
@@ -44,14 +72,14 @@ export const HeaderContainer = styled.header`
         font-size: 1rem;
 
         &:hover {
-          color: ${(props) => props.theme.black};
+          filter: contrast(500%);
         }
-
+        
         &:visited {
           color: ${(props) => props.theme['gray-300']};
-
+          
           &:hover {
-            color: ${(props) => props.theme.black};
+            filter: contrast(500%);
           }
         }
       }
