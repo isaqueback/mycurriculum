@@ -5,6 +5,7 @@ import { defaultTheme } from '../styles/themes/default'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { AnimationProvider } from '../contexts/AnimationContext'
+import 'animate.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

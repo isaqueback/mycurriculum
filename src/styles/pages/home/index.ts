@@ -1,43 +1,22 @@
-import styled, { css } from 'styled-components'
-
-interface Presentation1Props {
-  isPresentation1Title1Visible: boolean
-  isPresentation1Title2Visible: boolean
-  isPresentation1P1Visible: boolean
-  isPresentation1P2Visible: boolean
-  isPresentation1Button1Visible: boolean
-  isPresentation1Button2Visible: boolean
-  isPresentation1ImgVisible: boolean
-}
-
-interface Presentation2Props {
-  isPresentation2Section1Visible: boolean
-  isPresentation2Section2Visible: boolean
-  isPresentation2Section3Visible: boolean
-  isPresentation2Illustration1Visible: boolean
-  isPresentation2Illustration2Visible: boolean
-}
-
-interface Presentation3Props {
-  isPresentation3TitleVisible: boolean
-  isPresentation3SliderVisible: boolean
-  isPresentation3ButtonVisible: boolean
-}
-
-interface PricesProps {
-  isPricesTitleVisible: boolean
-  isPricesSection1Visible: boolean
-  isPricesSection2Visible: boolean
-}
+import styled from 'styled-components'
 
 export const HomeContainer = styled.main``
 
-export const Presentation1 = styled.section<Presentation1Props>`
+export const Presentation1 = styled.section`
+  width: 100%;
   height: calc(100vh - 40px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
+  top: 0;
+  bottom: 100%;
+  left: 0;
+  right: 100%;
+  overflow: hidden;
+
+  background-color: ${props => props.theme['gray-100']};
 
   & > div {
     flex-direction: column;
@@ -45,22 +24,11 @@ export const Presentation1 = styled.section<Presentation1Props>`
     h2 {
       color: ${(props) => props.theme['gray-300']};
       font-weight: 700;
-      opacity: ${({ isPresentation1Title1Visible }) => {
-      return isPresentation1Title1Visible ? 1 : 0
-      }};
-      transform: ${({ isPresentation1Title1Visible }) => {
-      return isPresentation1Title1Visible ? css`scale(1)` : css`scale(0.8) translateX(-100px);`
-      }};
-      transition: opacity 700ms ease-out, transform 300ms ease-out;
     }
 
     p {
       color: ${(props) => props.theme['gray-300']};
       font-weight: 300;
-      opacity: ${({ isPresentation1P1Visible }) => {
-      return isPresentation1P1Visible ? 1 : 0
-      }};
-      transition: opacity 1200ms ease-out;
     }
   }
 
@@ -74,23 +42,12 @@ export const Presentation1 = styled.section<Presentation1Props>`
     h2 {
       font-size: 1.5rem;
       text-align: center;
-      opacity: ${({ isPresentation1Title2Visible }) => {
-      return isPresentation1Title2Visible ? 1 : 0
-      }};
-      transform: ${({ isPresentation1Title2Visible }) => {
-      return isPresentation1Title2Visible ? css`scale(1)` : css`scale(0.80) translateX(-200px);`
-      }};
-      transition: opacity 700ms ease-out, transform 300ms ease-out;
     }
 
     p {
       margin-top: 15px;
       font-size: 1rem;
       text-align: center;
-      opacity: ${({ isPresentation1P2Visible }) => {
-      return isPresentation1P2Visible ? 1 : 0
-      }};
-      transition: opacity 1200ms ease-out;
     }
   }
 
@@ -98,14 +55,6 @@ export const Presentation1 = styled.section<Presentation1Props>`
     object-fit: contain;
     width: 100%;
     height: 200px;
-    opacity: ${({ isPresentation1ImgVisible }) => {
-      return isPresentation1ImgVisible ? 1 : 0
-    }};
-    transform: ${({ isPresentation1ImgVisible }) => {
-      return isPresentation1ImgVisible ? css`translateX(0px)` : css`translateX(50px);`
-    }};
-    transition: all 600ms ease-out;
-    
   }
 
   button {
@@ -117,13 +66,7 @@ export const Presentation1 = styled.section<Presentation1Props>`
     font-size: 1.25rem;
     color: ${(props) => props.theme['gray-100']};
     cursor: pointer;
-    opacity: ${({ isPresentation1Button2Visible }) => {
-        return isPresentation1Button2Visible ? 1 : 0
-    }};
-    transform: ${({ isPresentation1Button2Visible }) => {
-      return isPresentation1Button2Visible ? css`scale(1) ` : css`scale(0.5)`
-    }};
-    transition: opacity 600ms ease-out, transform 500ms cubic-bezier(0,1.06,.21,1.44), background-color ease-out 300ms, color ease-out 300ms;
+    transition: all ease-out 300ms;
 
     &:hover {
       background-color: ${(props) => props.theme['purple-400']};
@@ -154,13 +97,7 @@ export const Presentation1 = styled.section<Presentation1Props>`
       a {
         margin-top: 30px;
         button {
-          opacity: ${({ isPresentation1Button1Visible }) => {
-            return isPresentation1Button1Visible ? 1 : 0
-          }};
-          transform: ${({ isPresentation1Button1Visible }) => {
-            return isPresentation1Button1Visible ? css`scale(1) ` : css`scale(0.5)`
-          }};
-          transition: opacity 600ms ease-out, transform 500ms cubic-bezier(0,1.06,.21,1.44), background-color ease-out 300ms, color ease-out 300ms;
+          transition: all ease-out 300ms;
         }
       }
     }
@@ -178,13 +115,6 @@ export const Presentation1 = styled.section<Presentation1Props>`
       height: 100%;
       object-fit: contain;
       transform: translateY(25px);
-      opacity: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? 1 : 0
-      }};
-      transform: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? css`translateX(0px)` : css`translateX(50px);`
-      }};
-      transition: all 600ms ease-out;
     }
   }
 
@@ -209,14 +139,6 @@ export const Presentation1 = styled.section<Presentation1Props>`
     & > img {
       width: 286px;
       height: 100%;
-      transform: translateY(48px);
-      opacity: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? 1 : 0
-      }};
-      transform: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? css`translateX(0px)` : css`translateX(50px)`
-      }};
-      transition: all 600ms ease-out;
     }
   }
 
@@ -250,18 +172,11 @@ export const Presentation1 = styled.section<Presentation1Props>`
       width: 286px;
       height: 100%;
       transform: translateY(95px);
-      opacity: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? 1 : 0
-      }};
-      transform: ${({ isPresentation1ImgVisible }) => {
-        return isPresentation1ImgVisible ? css`translateX(0px)` : css`translateX(100px);`
-      }};
-      transition: all 600ms ease-out;
     }
   }
 `
 
-export const Presentation2 = styled.article<Presentation2Props>`
+export const Presentation2 = styled.article`
   width: 100%;
   height: 100vh;
   min-height: 790px;
@@ -279,13 +194,6 @@ export const Presentation2 = styled.article<Presentation2Props>`
   }
 
   & > img:nth-child(2) {
-    transform: ${({ isPresentation2Illustration2Visible }) => {
-    return isPresentation2Illustration2Visible ? css`translateY(0)` : css`translateY(-30px)`
-  }};
-    opacity: ${({ isPresentation2Illustration2Visible }) => {
-    return isPresentation2Illustration2Visible ? 1 : 0
-  }}
-    transition: all 500ms ease-out;
   }
 
   article {
@@ -301,36 +209,6 @@ export const Presentation2 = styled.article<Presentation2Props>`
       padding: 15px 10px;
       box-shadow: 0px 0px 11px 0px ${(props) => props.theme['gray-450-50%']};
       border-radius: 15px;
-      
-      &:first-child {
-        transform: ${({ isPresentation2Section1Visible }) => {
-    return isPresentation2Section1Visible ? css`translateX(0)` : css`translateX(30px)`
-  }};
-        opacity: ${({ isPresentation2Section1Visible }) => {
-    return isPresentation2Section1Visible ? 1 : 0
-  }};
-        transition: all 500ms ease-out;
-      }
-
-      &:nth-child(2) {
-        transform: ${({ isPresentation2Section2Visible }) => {
-    return isPresentation2Section2Visible ? css`translateX(0)` : css`translateX(30px)`
-  }};
-        opacity: ${({ isPresentation2Section2Visible }) => {
-    return isPresentation2Section2Visible ? 1 : 0
-  }};
-        transition: all 600ms ease-out;
-      }
-
-      &:last-child {
-        transform: ${({ isPresentation2Section3Visible }) => {
-    return isPresentation2Section3Visible ? css`translateX(0)` : css`translateX(30px)`
-  }};
-        opacity: ${({ isPresentation2Section3Visible }) => {
-    return isPresentation2Section3Visible ? 1 : 0
-  }};
-        transition: all 500ms ease-out;
-      }
 
       & > img {
         display: none;
@@ -373,13 +251,6 @@ export const Presentation2 = styled.article<Presentation2Props>`
       height: 356px;
       width: 247px;
       max-width: 350px;
-      transform: ${({ isPresentation2Illustration1Visible }) => {
-    return isPresentation2Illustration1Visible ? css`translateX(0)` : css`translateX(-30px)`
-  }};
-      opacity: ${({ isPresentation2Illustration1Visible }) => {
-    return isPresentation2Illustration1Visible ? 1 : 0
-  }};
-      transition: all 700ms ease-out;
     }
 
     & > img:nth-child(2) {
@@ -487,7 +358,7 @@ export const Presentation2 = styled.article<Presentation2Props>`
   }
 `
 
-export const Presentation3 = styled.section<Presentation3Props>`
+export const Presentation3 = styled.section`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -497,30 +368,16 @@ export const Presentation3 = styled.section<Presentation3Props>`
   align-items: center;
   justify-content: center;
   gap: 70px;
+  overflow: hidden;
 
   h2 {
     font-size: 2rem;
     text-align: center;
     font-weight: 700;
     color: ${(props) => props.theme['gray-300']};
-    transform: ${({ isPresentation3TitleVisible }) => {
-    return isPresentation3TitleVisible ? css`translateY: 0 scale(1);` : css`translateY(-20px) scale(0.9);`
-  }};
-    opacity: ${({ isPresentation3TitleVisible }) => {
-    return isPresentation3TitleVisible ? 1 : 0
-  }};
-    transition: all 600ms ease-out;
   }
   
   a {
-    transform: ${({ isPresentation3ButtonVisible }) => {
-    return isPresentation3ButtonVisible ? css`translateX(0)` : css`translateX(50px)`
-  }};
-    opacity: ${({ isPresentation3ButtonVisible }) => {
-    return isPresentation3ButtonVisible ? 1 : 0
-  }};
-    transition: all 500ms cubic-bezier(0,1.06,.21,1.44);
-
     button {
       font-size: 1.25rem;
       font-weight: 300;
@@ -567,7 +424,7 @@ export const Presentation3 = styled.section<Presentation3Props>`
   }
 `
 
-export const Prices = styled.article<PricesProps>`
+export const Prices = styled.article`
   width: 100%;
   padding-left: 10px;
   padding-right: 7px;
@@ -594,13 +451,6 @@ export const Prices = styled.article<PricesProps>`
     flex-direction: column;
     align-items: center;
     color: ${(props) => props.theme['purple-400']};
-    transform: ${({ isPricesTitleVisible }) => {
-    return isPricesTitleVisible ? css`translateY(0)` : css`translateY(-30px) scale(0.9)`
-  }};
-    opacity: ${({ isPricesTitleVisible }) => {
-    return isPricesTitleVisible ? 1 : 0
-  }};
-    transition: transform 500ms cubic-bezier(0,1.06,.21,1.44), opacity 500ms ease-out;
   }
 
   & > div {
@@ -625,26 +475,6 @@ export const Prices = styled.article<PricesProps>`
       min-height: 485px;
       max-height: 581.2px;
       padding: 0 12px;
-
-      &:first-child {
-        transform: ${({ isPricesSection1Visible }) => {
-    return isPricesSection1Visible ? css`translateX(0)` : css`translateX(-30px) scale(0.9)`
-  }};
-        opacity: ${({ isPricesSection1Visible }) => {
-    return isPricesSection1Visible ? 1 : 0
-  }};
-        transition: transform 500ms cubic-bezier(0,1.06,.21,1.44), opacity 500ms ease-out;
-      }
-
-      &:last-child {
-        transform: ${({ isPricesSection2Visible }) => {
-    return isPricesSection2Visible ? css`translateX(0)` : css`translateX(30px) scale(0.9)`
-  }};
-        opacity: ${({ isPricesSection2Visible }) => {
-    return isPricesSection2Visible ? 1 : 0
-  }};
-        transition: transform 500ms cubic-bezier(0,1.06,.21,1.44), opacity 500ms ease-out;
-      }
 
       & > img {
         border-radius: 30px;

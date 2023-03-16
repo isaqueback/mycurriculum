@@ -1,22 +1,9 @@
-import { MutableRefObject } from 'react'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
-interface CarouselContainerProps {
-  presentation3Slider: MutableRefObject<null> | undefined
-  isPresentation3SliderVisible: boolean
-}
-
-export const CarouselContainer = styled.div<CarouselContainerProps>`
+export const CarouselContainer = styled.div`
   width: 100%;
 
   .swiper {
-    transform: ${({isPresentation3SliderVisible}) => {
-      return isPresentation3SliderVisible ? css`translateY: 0 scale(1);` : css`translateY(20px) scale(0.9);`
-    }};
-    opacity: ${({isPresentation3SliderVisible}) => {
-      return isPresentation3SliderVisible ? 1 : 0
-    }};
-    transition: all 600ms cubic-bezier(0,-0.01,.01,1.46);
     padding-bottom: 50px;
 
     .swiper-pagination-bullet-active {

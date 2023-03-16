@@ -1,22 +1,6 @@
 import styled, { css } from 'styled-components'
 
-interface BurgerMenuContainerProps {
-  isHeaderBurgerMenuVisible: boolean
-}
-
-export const BurgerMenuContainer = styled.div<BurgerMenuContainerProps>`
-  opacity: ${({ isHeaderBurgerMenuVisible }) => {
-    return (
-      isHeaderBurgerMenuVisible ? 1 : 0
-    )
-  }};
-  transform: ${({ isHeaderBurgerMenuVisible }) => {
-    return (
-      isHeaderBurgerMenuVisible ? css`translateX(0px)` : css`translateX(30px)`
-    )
-  }};
-  transition: opacity 400ms ease-out, transform 400ms cubic-bezier(0,1.06,.21,1.44);
-  
+export const BurgerMenuContainer = styled.div`  
   input[type='checkbox'] {
     display: none;
   }
