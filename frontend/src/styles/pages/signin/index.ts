@@ -67,7 +67,7 @@ export const SigninContainer = styled.main`
             padding: 10px;
             text-align: center;
             transition: all 300ms ease-out;
-            z-index: 1;
+            z-index: 2;
 
             &:focus {
               border: 2px solid ${(props) => props.theme['red-400']};

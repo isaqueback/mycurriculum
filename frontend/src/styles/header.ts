@@ -14,14 +14,15 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
   padding: 10px 20px;
   overflow: hidden;
   position: relative;
-  z-index: 1;
+  z-index: 3;
+  overflow: visible;
 
   & > a {
     display: flex;
     align-items: center;
     gap: 0.625rem;
     text-decoration: none;
-  
+
     svg {
       fill: ${(props) => props.theme['red-400']};
       width: 27.97px;
@@ -56,10 +57,10 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
         &:hover {
           filter: contrast(500%);
         }
-        
+
         &:visited {
           color: ${(props) => props.theme['gray-300']};
-          
+
           &:hover {
             filter: contrast(500%);
           }
@@ -70,10 +71,10 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
 
   @media (min-width: 1728px) {
     padding: 20px 30px;
-    
+
     & > a {
       svg {
-        width: 49.22px
+        width: 49.22px;
         height: 44px;
       }
 

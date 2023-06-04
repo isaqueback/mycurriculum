@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { HeaderContainer } from '../styles/header'
-import { BurgerMenu } from './BurgerMenu'
+import { SideBarNavigation } from './SideBarNavigation'
 import { useContext } from 'react'
 import { AnimationContext } from '../contexts/AnimationContext'
 import Animate from '@researchgate/react-intersection-observer'
@@ -47,7 +47,7 @@ export function Header() {
           {!isSignin && <Link href="/signin">Sign-in/Sign-up</Link>}
         </nav>
       </Animate>
-      <BurgerMenu />
+      <SideBarNavigation />
     </HeaderContainer>
   )
 }
