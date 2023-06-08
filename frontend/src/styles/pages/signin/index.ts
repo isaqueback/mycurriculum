@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export const SigninContainer = styled.main`
+export const SignInContainer = styled.main`
   height: calc(100vh - 50px);
   background-color: ${(props) => props.theme['gray-100']};
   display: flex;
@@ -103,12 +103,12 @@ export const SigninContainer = styled.main`
         margin: 20px 20px 0;
         display: flex;
         flex-direction: column;
-        gap: 5px;
+        gap: 15px;
         z-index: 5;
 
         span {
           a {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 300;
             color: ${(props) => props.theme['gray-300']};
             transition: all 300ms ease-out;

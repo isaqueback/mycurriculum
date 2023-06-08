@@ -4,18 +4,17 @@ import { ThemeProvider } from 'styled-components'
 import { defaultTheme } from '../styles/themes/default'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
-import { AnimationProvider } from '../contexts/AnimationContext'
-import 'animate.css'
+import { AuthProvider } from '../contexts/AuthContext'
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={defaultTheme}>
-      <AnimationProvider>
+      <AuthProvider>
         <Header />
         <Component {...pageProps} />
         <Footer />
         <GlobalStyle />
-      </AnimationProvider>
+      </AuthProvider>
     </ThemeProvider>
   )
 }

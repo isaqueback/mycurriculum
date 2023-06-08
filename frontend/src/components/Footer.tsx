@@ -17,14 +17,14 @@ export function Footer() {
         <Link href="/">FAQ</Link>
         <Link href="/">Sobre nós</Link>
       </nav>
-      <div>
+      <Link href="https://www.linkedin.com/in/isaqueback/" target="_blank">
         <small>Este site foi desenvolvido com </small>
         <Image src={heart} alt="Coração" />
         <small>
           {' '}
           por <strong>Isaque Delfino</strong>
         </small>
-      </div>
+      </Link>
     </FooterContainer>
   )
 }

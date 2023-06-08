@@ -17,6 +17,7 @@ import { authAddressBooksDestroy } from './app/middlewares/authBookAdresses/dest
 const routes = Router()
 
 // Sessions
+routes.get('/sessions/:token', sessions.show)
 routes.post('/sessions', sessions.create)
 
 // Users

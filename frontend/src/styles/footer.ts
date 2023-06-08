@@ -18,7 +18,7 @@ export const FooterContainer = styled.footer`
     text-decoration: none;
     color: ${(props) => props.theme['gray-100']};
 
-    &:visited: {
+    &:visited {
       color: ${(props) => props.theme['gray-100']};
     }
 
@@ -45,7 +45,7 @@ export const FooterContainer = styled.footer`
         color: ${(props) => props.theme['gray-100']};
       }
 
-      &:visited: {
+      &:visited {
         font-weight: 300;
         font-size: 1.25rem;
         color: ${(props) => props.theme['gray-200']};
@@ -53,12 +53,14 @@ export const FooterContainer = styled.footer`
     }
   }
 
-  & > div:last-child {
+  & > a:last-child {
     font-size: 1rem;
     color: ${(props) => props.theme['gray-100']};
     font-weight: 300;
     display: flex;
     align-items: flex-start;
+
+    cursor: pointer;
 
     img {
       width: 19px;
@@ -66,15 +68,15 @@ export const FooterContainer = styled.footer`
     }
 
     small {
-      font-size: 0.83rem;
-
       strong {
-        cursor: pointer;
-
-        &:hover {
-          text-decoration: underline;
-        }
+        text-decoration: none;
+        font-size: 0.83rem;
+        color: ${(props) => props.theme['gray-100']};
       }
+    }
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -89,7 +91,7 @@ export const FooterContainer = styled.footer`
       gap: 60px;
     }
 
-    div {
+    a {
       margin-top: 10px;
       justify-self: center;
     }
