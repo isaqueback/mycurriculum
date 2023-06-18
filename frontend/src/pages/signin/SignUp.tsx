@@ -102,7 +102,6 @@ export default function SignUp() {
   async function onSubmit(data?: RegisterFormType) {
     if (data) {
       await setIsCreatingAccount(true)
-      console.log(isCreatingAccount)
       setEmailSubmitted(data.email)
       await signUp(data)
     } else {
@@ -113,7 +112,6 @@ export default function SignUp() {
     }
 
     setIsCreatingAccount(false)
-    console.log(isCreatingAccount)
   }
 
   function renderEmailSmall(count: number) {
@@ -150,9 +148,11 @@ export default function SignUp() {
               in={isNotSuccessfulySubmitted}
             >
               <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                <h3>Criar conta</h3>
+                <h3 id="modal-modal-title">Criar conta</h3>
 
-                <p>Crie sua conta preenchendo os campos abaixo</p>
+                <p id="modal-modal-description">
+                  Crie sua conta preenchendo os campos abaixo
+                </p>
 
                 <label htmlFor="fullname">
                   <span>Nome completo*</span>

@@ -16,9 +16,20 @@ interface SignInProps {
   password: string
 }
 
-interface SignUpData {
+interface SignUpProps {
   fullname: string
   email: string
+  password: string
+  passwordConfirmation: string
+}
+
+interface ForgotPasswordProps {
+  email: string
+}
+
+interface ResetPasswordProps {
+  email: string
+  token: string
   password: string
   passwordConfirmation: string
 }
@@ -30,12 +41,14 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean
   signIn: (props: SignInProps) => void
-  signUp: (data: SignUpData) => Promise<void>
+  signUp: (data: SignUpProps) => Promise<void>
   user: User | null
   error: string | null
   setError: Dispatch<SetStateAction<string | null>>
   isNotSuccessfulySubmitted: boolean
   setIsNotSuccessfullySubmitted: Dispatch<SetStateAction<boolean>>
+  forgotPassword: (data: ForgotPasswordProps) => Promise<void>
+  resetPassword: (data: ResetPasswordProps) => Promise<void>
 }
 
 interface AuthProviderProps {
@@ -90,7 +103,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  async function signUp(data: SignUpData) {
+  async function signUp(data: SignUpProps) {
     try {
       await api.post('users', data)
 
@@ -114,6 +127,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function forgotPassword(data: ForgotPasswordProps) {
+    try {
+      await api.post('users/forgot-password', data)
+    } catch (err) {}
+  }
+
+  async function resetPassword(data: ResetPasswordProps) {
+    await api.post('users/reset-password', data)
+  }
+
   useEffect(() => {
     getUser()
   }, [])
@@ -129,6 +152,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setError,
         isNotSuccessfulySubmitted,
         setIsNotSuccessfullySubmitted,
+        forgotPassword,
+        resetPassword,
       }}
     >
       {children}

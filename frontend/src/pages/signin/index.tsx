@@ -2,7 +2,6 @@ import { SignInContainer } from '@/src/styles/pages/signin'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
 import Image from 'next/image'
 import authenticationIllustration from '../../assets/illustrations/authentication.gif'
 import waveIllustration from '../../assets/illustrations/wave-haikei.svg'
@@ -13,6 +12,7 @@ import { GetServerSideProps } from 'next'
 import { destroyCookie, parseCookies } from 'nookies'
 import jwt from 'jsonwebtoken'
 import SignUp from './SignUp'
+import ForgotPassword from './ForgotPassword'
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -52,9 +52,7 @@ export default function SignIn() {
             <button type="submit">ENTRAR</button>
           </form>
           <nav>
-            <span>
-              <Link href="/">Esqueceu a senha?</Link>
-            </span>
+            <ForgotPassword />
             <SignUp />
           </nav>
         </div>
