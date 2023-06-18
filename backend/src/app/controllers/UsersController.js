@@ -76,7 +76,7 @@ class UsersController {
       const parseIntExpiresIn = parseInt(process.env.CONFIG_AUTH_EXPIRES_IN_2)
 
       const token = jwt.sign({ user: { ...newUser, date_of_birth: parsedDateOfBirth }, userRoles: [freeUserRole.id], userPermissions: freeUserPermissionsIds }, process.env.CONFIG_AUTH_SECRET_2, { expiresIn: parseIntExpiresIn })
-      const confirmationLink = `${process.env.DOMAIN}/users/verify/${token}`
+      const confirmationLink = `${process.env.SERVER_DOMAIN}${process.env.SERVER_PORT}/users/verify/${token}`
 
       await Mail.send({
         to: email,
@@ -176,9 +176,9 @@ class UsersController {
 
       const user = await User.findOne({ where: { email }, include: [{ model: Role, as: 'roles' }] })
       
-      if(user.roles.includes('admin')) return res.status(403).json({error: 'Unauthorized access.'})
-
       if (!user) return res.status(404).json({ error: 'User not found.' })
+      
+      if(user.roles.includes('admin')) return res.status(403).json({error: 'Unauthorized access.'})
 
       const token = crypto.randomBytes(20).toString('hex')
       const expiresAt = addHours(Date.now(), 1)
@@ -187,7 +187,9 @@ class UsersController {
         reset_password_expires: expiresAt
       })
 
-      const resetUrl = `${process.env.DOMAIN}/users/reset-password/${token}`
+      const resetUrl = new URL(`http://${process.env.FRONTEND_SERVER_DOMAIN}${process.env.FRONTEND_SERVER_PORT}/reset-password`)
+      resetUrl.searchParams.append('email', email)
+      resetUrl.searchParams.append('token', token)
 
       await Mail.send({
         to: email,
@@ -197,6 +199,7 @@ class UsersController {
 
       res.json({ message: 'Password reset email sent.' })
     } catch (err) {
+      console.log(err)
       res.status(500).json({ error: 'Internal server error.' })
     }
   }
@@ -211,7 +214,7 @@ class UsersController {
         passwordConfirmation: Yup.string().when('password', (password, field) => {
           password ? field.oneOf([Yup.ref('password')]).required() : field
         }),
-        token: Yup.string().min(20),
+        token: Yup.string().min(20).required(),
       })
 
       if (! await schema.isValid({ email, password, passwordConfirmation, token })) return res.status(401).json({ error: 'Error on validate schema.' })

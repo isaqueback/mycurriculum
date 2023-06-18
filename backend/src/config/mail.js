@@ -1,12 +1,12 @@
 export default {
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
+    host: "smtp.ethereal.email",
+    port: 587,
     secure: false,
     auth: {
-        user: "016d0ee63dc574",
-        pass: "3b13d2f3564765"
+        user: "ferne.barton@ethereal.email",
+        pass: "Ctwg7t26UNEB443QCT"
     },
     default: {
-        from: 'Sistema <naoresponda@exemplo.com>'
+        from: 'Ferne Barton <ferne.barton@ethereal.email>'
     }
 }
