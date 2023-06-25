@@ -131,6 +131,7 @@ export const SideBar = styled.nav<SideBarProps>`
 `
 
 export const SideBarNavigationContainer = styled.div`
+  display: none;
   position: absolute;
   top: 10px;
   right: 0;

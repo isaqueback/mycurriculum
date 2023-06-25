@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 interface HeaderContainerProps {
   isSignin: boolean
+  isInsideAccount: boolean
 }
 
 export const HeaderContainer = styled.header<HeaderContainerProps>`
@@ -9,7 +10,8 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
     props.isSignin ? props.theme['yellow-100'] : 'transparent'};
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: ${({ isInsideAccount }) =>
+    isInsideAccount ? 'center' : 'space-between'};
   align-items: center;
   padding: 10px 20px;
   overflow: hidden;
@@ -30,8 +32,10 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
     }
 
     h1 {
-      color: ${(props) => props.theme['red-400']};
-      font-size: 1.25rem;
+      color: ${({ isInsideAccount, theme }) =>
+        isInsideAccount ? theme['purple-300'] : theme['red-400']};
+      font-size: ${({ isInsideAccount }) =>
+        isInsideAccount ? '1.5rem' : '1.25rem'};
       font-weight: 700;
     }
   }
@@ -43,7 +47,7 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
 
   @media (min-width: 768px) {
     nav {
-      display: flex;
+      display: ${({ isInsideAccount }) => (isInsideAccount ? 'none' : 'flex')};
       justify-content: center;
       flex-grow: 1;
       gap: 40px;
@@ -69,6 +73,18 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
     }
   }
 
+  @media (min-width: 1024px) {
+    box-shadow: ${({ isInsideAccount, theme }) =>
+      isInsideAccount ? `0px -10px 20px ${theme['gray-200']}` : 'none'};
+
+    & > a {
+      h1 {
+        font-size: ${({ isInsideAccount }) =>
+          isInsideAccount ? '2rem' : '1.25rem'};
+      }
+    }
+  }
+
   @media (min-width: 1728px) {
     padding: 20px 30px;
 
@@ -79,7 +95,8 @@ export const HeaderContainer = styled.header<HeaderContainerProps>`
       }
 
       h1 {
-        font-size: 2.25rem;
+        font-size: ${({ isInsideAccount }) =>
+          isInsideAccount ? '2.5rem' : '2.25rem'};
       }
     }
 
