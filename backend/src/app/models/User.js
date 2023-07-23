@@ -24,7 +24,8 @@ class User extends Model {
     }
 
     static associate(models) {
-        this.hasMany(models.AddressBook, { foreignKey: 'user_id', as: 'address_books' })
+        this.hasMany(models.File, { foreignKey: 'user_id', as: 'files' })
+        this.hasMany(models.Curriculum, { foreignKey: 'user_id', as: 'curriculums' })
         this.belongsToMany(models.Role, { through: 'users_roles', foreignKey: 'user_id', as: 'roles' })
         this.belongsToMany(models.Permission, { through: 'users_permissions', foreignKey: 'user_id', as: 'permissions' })
     }

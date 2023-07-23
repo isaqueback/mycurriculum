@@ -6,7 +6,6 @@ import Mail from '../../lib/Mail.js'
 import * as Yup from 'yup'
 import { Op } from 'sequelize'
 import { parse, addHours } from 'date-fns'
-import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 class UsersController {
@@ -217,7 +216,7 @@ class UsersController {
         token: Yup.string().min(20).required(),
       })
 
-      if (! await schema.isValid({ email, password, passwordConfirmation, token })) return res.status(401).json({ error: 'Error on validate schema.' })
+      if (! await schema.isValid({ email, password, passwordConfirmation, token })) return res.status(422).json({ error: 'Error on validate schema.' })
 
       if (password !== passwordConfirmation) return res.status(401).json({ error: 'Password and password confirmation not match.' })
 

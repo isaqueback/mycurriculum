@@ -2,16 +2,20 @@ import jwt from 'jsonwebtoken'
 import User from '../../models/User.js'
 import Role from '../../models/Role.js'
 
-export const authAddressBooksIndex = async (req, res, next) => {
+export const authFilesIndex = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization
         const paramsUserId = parseInt(req.params.userId)
 
         if (!Number.isInteger(paramsUserId)) return res.status(404).json({ error: 'User not found.' })
 
-        if (authHeader) {
-            const [, token] = authHeader.split(' ')
+        const paramsUser = await User.findByPk(paramsUserId)
 
+        if (!paramsUser) return res.status(404).json({ error: 'User not found.' })
+
+        const [, token] = authHeader?.split(' ') ?? []
+
+        if (authHeader) {
             const { id: tokenUserId } = jwt.verify(token, process.env.CONFIG_AUTH_SECRET)
 
             const tokenUser = await User.findByPk(tokenUserId, {
@@ -22,16 +26,21 @@ export const authAddressBooksIndex = async (req, res, next) => {
 
             const isAdmin = tokenUser.roles.some(role => role.name === 'admin')
 
-            if(paramsUserId !== tokenUserId && !isAdmin) return res.status(403).json({error: 'Access denied.'})
+            if (tokenUser.id !== paramsUser.id) {
+                if (isAdmin) {
+                    return next()
+                }
+
+                return res.status(403).json({ error: 'Access denied.' })
+
+            }
 
             return next()
         }
 
-        res.status(401).json({ error: 'Token not provided.' })
+        return res.status(403).json({ error: 'Token not provided.' })
     } catch (err) {
-        if (err.name === 'JsonWebTokenError') return res.status(403).json({ error: 'Access denied.' })
-
+        if (err.name === 'JsonWebTokenError' || err.name === 'TypeError' || err.name === 'TokenExpiredError') return res.status(403).json({ error: 'Access denied.' })
         return res.status(500).json({ error: 'Internal server error.' })
     }
-
 }

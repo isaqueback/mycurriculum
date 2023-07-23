@@ -3,11 +3,12 @@ import Sequelize from 'sequelize'
 import config from '../config/database.js'
 
 import User from '../app/models/User.js'
-import AddressBook from '../app/models/AddressBook.js'
 import Role from '../app/models/Role.js'
 import Permission from '../app/models/Permission.js'
+import File from '../app/models/File.js'
+import Curriculum from '../app/models/Curriculum.js'
 
-const models = [User, AddressBook, Role, Permission]
+const models = [User, Role, Permission, File, Curriculum]
 
 class Database {
     constructor() {
