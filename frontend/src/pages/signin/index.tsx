@@ -7,12 +7,13 @@ import authenticationIllustration from '../../assets/illustrations/authenticatio
 import waveIllustration from '../../assets/illustrations/wave-haikei.svg'
 import blobIllustration from '../../assets/illustrations/blob-haikei.svg'
 import { AuthContext } from '@/src/contexts/AuthContext'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { GetServerSideProps } from 'next'
 import { destroyCookie, parseCookies } from 'nookies'
 import jwt from 'jsonwebtoken'
 import SignUp from './SignUp'
 import ForgotPassword from './ForgotPassword'
+import Router from 'next/router'
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -21,7 +22,11 @@ const loginFormSchema = z.object({
 
 type LoginFormType = z.infer<typeof loginFormSchema>
 
-export default function SignIn() {
+interface SignInProps {
+  token: string | null
+}
+
+export default function SignIn({ token }: SignInProps) {
   const { register, handleSubmit } = useForm<LoginFormType>({
     resolver: zodResolver(loginFormSchema),
   })
@@ -30,6 +35,12 @@ export default function SignIn() {
   async function onSubmit(data: LoginFormType) {
     signIn(data)
   }
+
+  useEffect(() => {
+    if (token) {
+      Router.push('/curriculums')
+    }
+  }, [token])
 
   return (
     <SignInContainer>
@@ -79,7 +90,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
       return {
         redirect: {
-          destination: '/dashboard',
+          destination: '/curriculums',
           permanent: false,
         },
       }
@@ -89,6 +100,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: {},
+    props: {
+      token: token || null,
+    },
   }
 }

@@ -1,6 +1,7 @@
 import User from "../models/User.js"
 import Curriculum from "../models/Curriculum.js"
 import Yup from 'yup'
+import { Op } from "sequelize";
 
 function isValidDay(day, month, year) {
     if (day < 1 || day > 31) {
@@ -99,16 +100,11 @@ const dateValidationSchema = {
 }
 
 const curriculumSchema = Yup.object().shape({
-    name: Yup.string().min(1, 'Name must be a minimum of 1 character.').strict().typeError('Name must be a string.'),
+    name: Yup.string().min(1, 'Name must be a minimum of 1 character.').strict().typeError('Name must be a string.').required('Name is required.'),
     role: Yup.string().min(1, 'Role must be a minimum of 1 character.').strict().max(80, 'The role must be a maximum of 80 characters.').typeError('Role must be a string.'),
     cell_phone: Yup.string().min(1, 'Cellphone must be a minimum of 1 character.').strict().max(20, 'The cell phone number must be a maximum of 20 characters.').typeError('Cell phone must be a string.'),
     telephone: Yup.string().min(1, 'Telephone must be a minimum of 1 character.').strict().max(20, 'The telephone number must be a maximum of 20 characters.').typeError('Telephone must be a string.'),
-    country: Yup.string().min(1, 'Country must be a minimum of 1 character.').strict().typeError('Country must be a string.').typeError('Country must be a string.'),
-    district: Yup.string().min(1, 'District must be a minimum of 1 character.').strict().typeError('District must be a string.'),
-    city: Yup.string().min(1, 'City must be a minimum of 1 character.').strict().typeError('City must be a string.'),
     address: Yup.string().min(1, 'Address must be a minimum of 1 character.').strict().typeError('Address must be a string.'),
-    address_complement: Yup.string().min(1, 'Address complement must be a minimum of 1 character.').strict().typeError('Address complement must be a string.'),
-    cep: Yup.string().min(1, 'Cep must be a minimum of 1 character.').strict().typeError('CEP must be a string.'),
     email: Yup.string().min(1, 'Email must be a minimum of 1 character.').strict().typeError('Email must be a string.'),
     linkedin: Yup.string().min(1, 'Linkedin must be a minimum of 1 character.').strict().typeError('Linkedin must be a string.'),
     twitter: Yup.string().min(1, 'Twitter must be a minimum of 1 character.').strict().typeError('Twitter must be a string.'),
@@ -199,11 +195,28 @@ class CurriculumsController {
         try {
             const user_id = parseInt(req.params.userId)
 
-            const user = await User.findByPk(user_id, {
-                include: [{ model: Curriculum, as: 'curriculums' }]
-            })
+            const search = req.query.search
+            let amount = parseInt(req.query.amount)
 
-            const { curriculums } = user
+            if (!Number.isInteger(amount) || amount < 0) amount = 2
+
+            const page = req.query.page || 1
+            const limit = amount || 2
+
+            let where = { user_id }
+
+            if (search) {
+                where = {
+                    ...where,
+                    name: { [Op.iLike]: `%${search}%` }
+                }
+
+            }
+            const curriculums = await Curriculum.findAll({
+                where,
+                limit,
+                offset: limit * page - limit
+            })
 
             return res.json(curriculums)
         } catch (err) {
@@ -216,7 +229,7 @@ class CurriculumsController {
             const user_id = parseInt(req.params.userId)
             const id = parseInt(req.params.id)
 
-            if (!id) return res.status(404).json({ error: 'Curriculum not found.' })
+            if (!id) return res.status(404).json({ error: 'Curriculum not found..' })
 
             const curriculum = await Curriculum.findOne({
                 where: { id, user_id }
@@ -230,6 +243,29 @@ class CurriculumsController {
         }
     }
 
+    async count(req, res) {
+        let count = 0
+        console.log('oi')
+
+        try {
+            const user_id = parseInt(req.params.userId)
+            const search = req.query.search
+
+            let where = { user_id }
+
+            if (search) {
+                where = {
+                    ...where,
+                    name: { [Op.iLike]: `%${search}%` }
+                }
+            }
+
+            count = await Curriculum.count({ where })
+        } catch (err) { }
+
+        res.json({ count })
+    }
+
     async create(req, res) {
         try {
             const user_id = parseInt(req.params.userId)
@@ -238,9 +274,9 @@ class CurriculumsController {
 
             const validatedReceivedCurriculum = await curriculumSchema.validate(receivedCurriculum)
 
-            await Curriculum.create({ ...validatedReceivedCurriculum, user_id })
+            const { id: curriculum_id } = await Curriculum.create({ ...validatedReceivedCurriculum, user_id })
 
-            return res.json({ ...validatedReceivedCurriculum, user_id })
+            return res.json({ ...validatedReceivedCurriculum, user_id, curriculum_id })
         } catch (err) {
             if (err instanceof Yup.ValidationError) {
                 return res.status(422).json({ error: 'Error on validate schema.', details: err.errors[0] })

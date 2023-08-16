@@ -18,6 +18,7 @@ import { authFilesDestroy } from './app/middlewares/authFiles/destroy.js'
 import { authFilesUpdate } from './app/middlewares/authFiles/update.js'
 import { authCurriculumsIndex } from './app/middlewares/authCurriculums/index.js'
 import { authCurriculumsShow } from './app/middlewares/authCurriculums/show.js'
+import { authCurriculumsCount } from './app/middlewares/authCurriculums/count.js'
 import { authCurriculumsCreate } from './app/middlewares/authCurriculums/create.js'
 import { authCurriculumsUpdate } from './app/middlewares/authCurriculums/update.js'
 import { authCurriculumsDestroy } from './app/middlewares/authCurriculums/destroy.js'
@@ -47,6 +48,7 @@ routes.put('/users/:userId/files/:id', authFilesUpdate, files.update)
 routes.delete('/users/:userId/files/:id', authFilesDestroy, files.destroy)
 
 // Curriculums
+routes.get('/users/:userId/curriculums/count', authCurriculumsCount, curriculums.count)
 routes.get('/users/:userId/curriculums', authCurriculumsIndex, curriculums.index)
 routes.get('/users/:userId/curriculums/:id', authCurriculumsShow, curriculums.show)
 routes.post('/users/:userId/curriculums', authCurriculumsCreate, curriculums.create)

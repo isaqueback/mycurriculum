@@ -23,7 +23,9 @@ class UsersController {
     try {
       const id = parseInt(req.params.id)
 
-      const user = await User.findByPk(id)
+      const user = await User.findByPk(id, {
+        include: [{ model: Role, as: 'roles' }]
+      })
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
 
@@ -174,10 +176,10 @@ class UsersController {
       if (! await schema.isValid({ email })) return res.status(401).json({ error: 'Error on validate schema.' })
 
       const user = await User.findOne({ where: { email }, include: [{ model: Role, as: 'roles' }] })
-      
+
       if (!user) return res.status(404).json({ error: 'User not found.' })
-      
-      if(user.roles.includes('admin')) return res.status(403).json({error: 'Unauthorized access.'})
+
+      if (user.roles.includes('admin')) return res.status(403).json({ error: 'Unauthorized access.' })
 
       const token = crypto.randomBytes(20).toString('hex')
       const expiresAt = addHours(Date.now(), 1)

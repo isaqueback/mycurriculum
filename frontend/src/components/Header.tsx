@@ -14,7 +14,6 @@ export function Header() {
   const isDashboard = router.route.substring(1) === 'dashboard'
   const isInsideAccount =
     isAuthenticated && route !== '/' && route !== '/signin'
-  console.log(router.route)
 
   return (
     <HeaderContainer isSignin={isSignin} isInsideAccount={isInsideAccount}>

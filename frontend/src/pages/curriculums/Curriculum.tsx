@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import Image from 'next/image'
-import { CurriculumContainer } from '@/src/styles/pages/dashboard/curriculum'
+import { CurriculumContainer } from '@/src/styles/pages/curriculums/curriculum'
 import template1Illustration from '@/src/assets/illustrations/template-1.png'
 import downloadIllustration from '@/src/assets/illustrations/download-simple.svg'
 import download2Illustration from '@/src/assets/illustrations/download-simple2.svg'
@@ -7,20 +8,25 @@ import duplicateIllustration from '@/src/assets/illustrations/copy-simple.svg'
 import duplicateIllustration2 from '@/src/assets/illustrations/copy-simple2.svg'
 import penIllustration from '@/src/assets/illustrations/pen.svg'
 import pen2Illustration from '@/src/assets/illustrations/pen2.svg'
-import { useState } from 'react'
+import { format, formatDistanceToNow } from 'date-fns'
+import ptBR from 'date-fns/locale/pt-BR'
+import 'animate.css'
 
 interface CurriculumProps {
   name: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
-export default function Curriculum({
-  name,
-  createdAt,
-  updatedAt,
-}: CurriculumProps) {
+const Curriculum = ({ name, createdAt, updatedAt }: CurriculumProps) => {
   const [curriculumImageHovered, setCurriculumImageHovered] = useState(false)
+
+  const formattedCreatedAt = format(new Date(createdAt), 'dd/MM/yyyy')
+  const formattedUpdatedAt = formatDistanceToNow(new Date(updatedAt), {
+    addSuffix: true,
+    includeSeconds: true,
+    locale: ptBR,
+  })
 
   const handleCurriculumImageHover = () => {
     setCurriculumImageHovered((state) => !state)
@@ -30,13 +36,14 @@ export default function Curriculum({
       curriculumImageHovered={curriculumImageHovered}
       onMouseEnter={handleCurriculumImageHover}
       onMouseLeave={handleCurriculumImageHover}
+      className="animate__animated animate__fadeIn animate__faster"
     >
       <Image src={template1Illustration} alt={'Foto do currículo de ' + name} />
       <div className="curriculum-info-container">
-        <h2>Currículo de {name}</h2>
+        <h2>{name === 'Novo Currículo' ? name : `Currículo de ${name}`}</h2>
         <div className="curriculum-dates-container">
-          <time dateTime="2023-12-20">criado em 20/12/2023</time>
-          <time dateTime="2023-12-20">atualizado há 3 dias atrás</time>
+          <time dateTime={createdAt}>criado em {formattedCreatedAt}</time>
+          <time dateTime={updatedAt}>atualizado {formattedUpdatedAt}</time>
         </div>
         <div className="curriculum-buttons-container">
           <button>
@@ -65,3 +72,5 @@ export default function Curriculum({
     </CurriculumContainer>
   )
 }
+
+export default Curriculum

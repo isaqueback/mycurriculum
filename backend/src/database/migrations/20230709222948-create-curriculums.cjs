@@ -1,4 +1,5 @@
 'use strict';
+// Alterar allowNull para false
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -26,27 +27,7 @@ module.exports = {
         type: Sequelize.STRING(20),
         allowNull: true,
       },
-      country: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      district: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      city: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
       address: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      address_complement: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      cep: {
         type: Sequelize.STRING,
         allowNull: true,
       },

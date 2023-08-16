@@ -1,4 +1,4 @@
-import { parseCookies, setCookie } from 'nookies'
+import { parseCookies, setCookie, destroyCookie } from 'nookies'
 import {
   Dispatch,
   ReactNode,
@@ -41,6 +41,7 @@ interface User {
 interface AuthContextType {
   isAuthenticated: boolean
   signIn: (props: SignInProps) => void
+  signOut: (tokenName: string) => void
   signUp: (data: SignUpProps) => Promise<void>
   user: User | null
   error: string | null
@@ -91,7 +92,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setUser(user)
 
-      Router.push('/dashboard')
+      Router.push('/curriculums')
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 401) {
         alert('User password not match.')
@@ -101,6 +102,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         alert('Something went wrong.')
       }
     }
+  }
+
+  function signOut(tokenName: string) {
+    destroyCookie(undefined, tokenName)
   }
 
   async function signUp(data: SignUpProps) {
@@ -146,6 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       value={{
         isAuthenticated,
         signIn,
+        signOut,
         signUp,
         user,
         error,
