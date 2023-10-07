@@ -1,9 +1,12 @@
 import User from "../models/User.js"
 import Curriculum from "../models/Curriculum.js"
 import Yup from 'yup'
-import { Op } from "sequelize";
+import { Op } from "sequelize"
+import { parse } from 'date-fns'
 
 function isValidDay(day, month, year) {
+    if (day === undefined) return true
+
     if (day < 1 || day > 31) {
         return false;
     }
@@ -27,13 +30,23 @@ const dateValidationSchema = {
         .integer('Entry day must be a integer number.')
         .min(1, 'Entry day must start from 1.')
         .test(
-            'validEntryDay',
+            'validEntryDayBasedOnEntryMonthAndYear',
             'Invalid entry day.',
             function (value) {
                 const entryYear = this.resolve(Yup.ref('entry_date_year'))
                 const entryMonth = this.resolve(Yup.ref('entry_date_month'))
 
                 return isValidDay(value, entryMonth, entryYear)
+            }
+        )
+        .test(
+            'validEntryDayBasedOnExitDay',
+            'When exit day exists entry day must exist as well.',
+            function (value) {
+                const exitDay = this.resolve(Yup.ref('exit_date_day'))
+                const isCurrentPosition = this.resolve(Yup.ref('is_current_position'))
+
+                return (!!exitDay === !!value) || isCurrentPosition
             }
         )
         .typeError('Entry day must be a number.'),
@@ -45,6 +58,16 @@ const dateValidationSchema = {
         .when('entry_date_day', (entryDateDay, field) => {
             return entryDateDay[0] ? field.required('When entry day exists entry month must exist as well.') : field
         })
+        .test(
+            'validEntryMonthBasedOnExitMonth',
+            'When exit month exists entry month must exist as well.',
+            function (value) {
+                const exitMonth = this.resolve(Yup.ref('exit_date_month'))
+                const isCurrentPosition = this.resolve(Yup.ref('is_current_position'))
+
+                return (!!exitMonth === !!value) || isCurrentPosition
+            }
+        )
         .typeError('Entry month must be a number.'),
     entry_date_year: Yup
         .number()
@@ -64,13 +87,16 @@ const dateValidationSchema = {
         .when('entry_date_month', (entryDateMonth, field) => {
             return entryDateMonth[0] ? field.required('When entry month exists entry year must exist as well.') : field
         })
+        .when('is_current_position', (isCurrentPosition, field) => {
+            return isCurrentPosition[0] ? field.required('When current position is true entry date year must exist.') : field
+        })
         .typeError('Entry year must be a number.'),
     exit_date_day: Yup
         .number()
         .integer('Exit day must be a integer number.')
         .min(1, 'Exit day must start from 1.')
         .test(
-            'validExitDay',
+            'validExitDayBasedOnExitMonthAndYear',
             'Invalid exit day.',
             function (value) {
                 const exitYear = this.resolve(Yup.ref('exit_date_year'))
@@ -96,23 +122,85 @@ const dateValidationSchema = {
         .when('exit_date_month', (exitDateMonth, field) => {
             return exitDateMonth[0] ? field.required('When exit month exists exit year must exist as well.') : field
         })
+        .test(
+            'validExitYear',
+            'Exit year must be greater than or equal to entry year.',
+            function (value) {
+                const entryYear = this.resolve(Yup.ref('entry_date_year'))
+                const isCurrentPosition = this.resolve(Yup.ref('is_current_position'))
+
+                return isCurrentPosition || (value === entryYear || value > entryYear)
+            }
+        )
+        .test(
+            'validExitYearBasedOnCurrentPosition',
+            'When current position exists year must not exist.',
+            function (value) {
+                const isCurrentPosition = this.resolve(Yup.ref('is_current_position'))
+                const entryYear = this.resolve(Yup.ref('entry_date_year'))
+                const exitYear = this.resolve(Yup.ref('exit_date_year'))
+
+                return (!!value !== isCurrentPosition) || (entryYear === undefined && exitYear === undefined)
+            }
+        )
         .typeError('Exit year must be a number.'),
 }
 
 const curriculumSchema = Yup.object().shape({
     name: Yup.string().min(1, 'Name must be a minimum of 1 character.').strict().typeError('Name must be a string.').required('Name is required.'),
     role: Yup.string().min(1, 'Role must be a minimum of 1 character.').strict().max(80, 'The role must be a maximum of 80 characters.').typeError('Role must be a string.'),
+    date_of_birth: Yup
+        .object()
+        .shape({
+            day: Yup
+                .number()
+                .integer()
+                .positive()
+                .min(1, 'Date of birth day must start from 1.')
+                .max(31, 'Date of birth day must end to 31.')
+                .required('Date of birth day is required.')
+                .test(
+                    'validDateOfBirthDayBasedOnDateOfBirthMonthAndYear',
+                    'Invalid date of birth day.',
+                    function (value) {
+                        const dateOfBirthYear = this.resolve(Yup.ref('year'))
+                        const dateOfBirthMonth = this.resolve(Yup.ref('month'))
+        
+                        return isValidDay(value, dateOfBirthMonth, dateOfBirthYear)
+                    }
+                )
+                .typeError('Date of birth day must be a number.'),
+            month: Yup
+                .number()
+                .integer()
+                .positive()
+                .min(1, 'Date of birth month must start from 1.')
+                .max(12, 'Date of birth month must end to 12.')
+                .required('Date of birth month is required.')
+                .typeError('Date of birth month must be a number.'),
+            year: Yup
+                .number()
+                .integer()
+                .positive()
+                .min(1900, 'Date of birth year must start from 1900.')
+                .required('Date of birth year is required.')
+                .typeError('Date of birth year must be a number.'),
+        })
+        .noUnknown()
+        .strict(),
+    gender: Yup.string().oneOf(['male', 'female', 'other']).typeError('Gender must be a string.'),
     cell_phone: Yup.string().min(1, 'Cellphone must be a minimum of 1 character.').strict().max(20, 'The cell phone number must be a maximum of 20 characters.').typeError('Cell phone must be a string.'),
     telephone: Yup.string().min(1, 'Telephone must be a minimum of 1 character.').strict().max(20, 'The telephone number must be a maximum of 20 characters.').typeError('Telephone must be a string.'),
     address: Yup.string().min(1, 'Address must be a minimum of 1 character.').strict().typeError('Address must be a string.'),
+    nacionality: Yup.string().min(1, 'Nacionality must be a minimum of 1 character.').max(40, 'Nacionality must be a maximum of 40 character.'),
     email: Yup.string().min(1, 'Email must be a minimum of 1 character.').strict().typeError('Email must be a string.'),
     linkedin: Yup.string().min(1, 'Linkedin must be a minimum of 1 character.').strict().typeError('Linkedin must be a string.'),
-    twitter: Yup.string().min(1, 'Twitter must be a minimum of 1 character.').strict().typeError('Twitter must be a string.'),
+    x: Yup.string().min(1, 'X must be a minimum of 1 character.').strict().typeError('X must be a string.'),
     facebook: Yup.string().min(1, 'Facebook must be a minimum of 1 character.').strict().typeError('Facebook must be a string.'),
     github: Yup.string().min(1, 'Github must be a minimum of 1 character.').strict().typeError('Github must be a string.'),
     dribbble: Yup.string().min(1, 'Dribbble must be a minimum of 1 character.').strict().typeError('Dribbble must be a string.'),
     youtube: Yup.string().min(1, 'Youtube must be a minimum of 1 character.').strict().typeError('Youtube must be a string.'),
-    drivers_license: Yup.string().min(1, 'Drivers license must be a minimum of 1 character.').strict().typeError('Drivers licence must be a string.'),
+    driver_license: Yup.string().min(1, 'Drivers license must be a minimum of 1 character.').strict().typeError('Drivers licence must be a string.'),
     custom_personal_datum_1: Yup
         .object()
         .shape({
@@ -133,6 +221,7 @@ const curriculumSchema = Yup.object().shape({
         .array()
         .of(Yup.string().min(1, 'Skill must be a minimum of 1 character.').typeError('Skills must be an array of string.'))
         .min(1, 'Skills must have at least 1 skill.')
+        .max(15, 'Skills must have a maximum of 15 skills.')
         .typeError('Skills must be an array of string.'),
     languages: Yup
         .array()
@@ -145,13 +234,21 @@ const curriculumSchema = Yup.object().shape({
     about_me: Yup.string().min(1, 'About me must be a minimum of 1 character.').max(400, 'About me must be a maximum of 400 characters.').typeError('About me must be a string.'),
     professional_experiences: Yup
         .array()
-        .of(Yup.object().shape({
-            role: Yup.string().required('Role is required.').min(1, 'Role must be a minimum of 1 character.').typeError('Role must be a string.'),
-            company: Yup.string().required('Company is required.').min(1, 'Company must be a minimum of 1 character.').typeError('Company must be a string.'),
-            address: Yup.string().min(1, 'Address must be a minimum of 1 character.').typeError('Address must be a string.'),
-            description: Yup.string().min(1, 'Description must be a minimum of 1 character.').typeError('Description must be a string.'),
-            ...dateValidationSchema,
-        }).strict().noUnknown().typeError('Professional experience must be a object.'))
+        .of(
+            Yup
+                .object()
+                .shape({
+                    role: Yup.string().required('Role is required.').min(1, 'Role must be a minimum of 1 character.').typeError('Role must be a string.'),
+                    company: Yup.string().required('Company is required.').min(1, 'Company must be a minimum of 1 character.').typeError('Company must be a string.'),
+                    address: Yup.string().min(1, 'Address must be a minimum of 1 character.').typeError('Address must be a string.'),
+                    description: Yup.string().min(1, 'Description must be a minimum of 1 character.').typeError('Description must be a string.'),
+                    is_current_position: Yup.boolean().required('Current position is required.'),
+                    ...dateValidationSchema,
+                })
+                .strict()
+                .noUnknown()
+                .typeError('Professional experience must be a object.')
+        )
         .min(1, 'Professional experiences must have at least 1 professional experience.')
         .typeError('Professional experiences must be an array of object.'),
     educations: Yup
@@ -160,6 +257,7 @@ const curriculumSchema = Yup.object().shape({
             course: Yup.string().required('Course is required.').typeError('Education course must be a string.'),
             institution: Yup.string().typeError('Education institution must be a string.'),
             address: Yup.string().typeError('Education address must be a string.'),
+            is_current_position: Yup.boolean().required('Current position is required.'),
             ...dateValidationSchema,
 
         }).strict().noUnknown())
@@ -274,10 +372,14 @@ class CurriculumsController {
 
             const validatedReceivedCurriculum = await curriculumSchema.validate(receivedCurriculum)
 
-            const { id: curriculum_id } = await Curriculum.create({ ...validatedReceivedCurriculum, user_id })
+            let dateOfBirth = validatedReceivedCurriculum.date_of_birth
+            dateOfBirth = parse(`${dateOfBirth.year}-${dateOfBirth.month}-${dateOfBirth.day}`, 'yyyy-MM-dd', new Date())
 
-            return res.json({ ...validatedReceivedCurriculum, user_id, curriculum_id })
+            const { id: curriculum_id } = await Curriculum.create({ ...validatedReceivedCurriculum, user_id, date_of_birth: dateOfBirth })
+
+            return res.json({ ...validatedReceivedCurriculum, date_of_birth: dateOfBirth , user_id, curriculum_id })
         } catch (err) {
+            console.log(err)
             if (err instanceof Yup.ValidationError) {
                 return res.status(422).json({ error: 'Error on validate schema.', details: err.errors[0] })
             }

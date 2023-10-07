@@ -19,6 +19,7 @@ interface CountCurriculumsProps {
   token: string
 }
 
+// Preciso tipar direito os objetos do CurriculumType
 export interface CurriculumType {
   about_me: String
   address: string
@@ -48,11 +49,37 @@ export interface CurriculumType {
   youtube: string
 }
 
-// Preciso tipar o getCurriculum direito
+interface GetTemplateProps {
+  tokenUserId: number | Number
+  templateId?: number
+  amount?: number
+  page?: number
+  token: string
+}
+
+interface CountTemplatesProps {
+  userId: number | Number
+  token: string
+}
+
+export interface TemplateType {
+  id: number
+  name: string
+  size: number
+  key: string
+  url: string
+  folder_name: string
+  createdAt: string
+  updatedAt: string
+  user_id: number
+}
+
 interface CurriculumContextType {
   createCurriculum: () => Promise<void>
   getCurriculum: (info: GetCurriculumProps) => Promise<CurriculumType[] | []>
   countCurriculums: (info: CountCurriculumsProps) => Promise<number>
+  getTemplate: (info: GetTemplateProps) => Promise<TemplateType[] | []>
+  countTemplates: (info: CountTemplatesProps) => Promise<number>
 }
 
 interface CurriculumProviderProps {
@@ -154,9 +181,65 @@ export function CurriculumProvider({ children }: CurriculumProviderProps) {
 
     return length
   }
+
+  async function getTemplate({
+    tokenUserId,
+    templateId,
+    amount,
+    page,
+    token,
+  }: GetTemplateProps): Promise<TemplateType[] | []> {
+    try {
+      let url = `/users/${tokenUserId}/files?folderName=templates`
+
+      if (templateId) {
+        url += `&id=${templateId}`
+
+        const template = await api.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        return template.data
+      } else {
+        if (amount) url += `&amount=${amount}`
+
+        url += `&page=${page || 1}`
+
+        const templates = await api.get(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        return templates.data
+      }
+    } catch (err) {
+      return []
+    }
+  }
+
+  async function countTemplates({ userId, token }: CountTemplatesProps) {
+    let length = 0
+    const url = `/users/${userId}/files/count?folderName=templates`
+
+    try {
+      const response = await api.get(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
+      length = response.data.count
+    } catch (err) {}
+
+    return length
+  }
+
   return (
     <CurriculumContext.Provider
-      value={{ createCurriculum, getCurriculum, countCurriculums }}
+      value={{
+        createCurriculum,
+        getCurriculum,
+        countCurriculums,
+        getTemplate,
+        countTemplates,
+      }}
     >
       {children}
     </CurriculumContext.Provider>

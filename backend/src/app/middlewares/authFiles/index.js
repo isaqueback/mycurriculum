@@ -25,14 +25,12 @@ export const authFilesIndex = async (req, res, next) => {
             if (!tokenUser) return res.status(404).json({ error: 'User not found.' })
 
             const isAdmin = tokenUser.roles.some(role => role.name === 'admin')
+            req.isAdmin = isAdmin
 
             if (tokenUser.id !== paramsUser.id) {
-                if (isAdmin) {
-                    return next()
-                }
+                if (isAdmin) return next()
 
                 return res.status(403).json({ error: 'Access denied.' })
-
             }
 
             return next()

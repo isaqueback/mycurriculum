@@ -15,6 +15,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      date_of_birth: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      gender: {
+        type: Sequelize.ENUM('male', 'female', 'other'),
+        allowNull: true,
+      },
       role: {
         type: Sequelize.STRING(80),
         allowNull: true,
@@ -31,6 +39,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      nacionality: {
+        type: Sequelize.STRING(40),
+        allowNull: true,
+      },
       email: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -39,7 +51,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      twitter: {
+      x: {
         type: Sequelize.STRING,
         allowNull: true,
       },
@@ -59,7 +71,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      drivers_license: {
+      driver_license: {
         type: Sequelize.STRING,
         allowNull: true,
       },

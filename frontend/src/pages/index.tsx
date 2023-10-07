@@ -33,7 +33,7 @@ export default function Home() {
             Com um currículo bem elaborado, você aumenta suas chances de
             conseguir a vaga dos seus sonhos!
           </p>
-          <Link href={isAuthenticated ? '/dashboard' : '/signin'}>
+          <Link href={isAuthenticated ? '/curriculums' : '/signin'}>
             <button>Fazer currículo</button>
           </Link>
         </div>

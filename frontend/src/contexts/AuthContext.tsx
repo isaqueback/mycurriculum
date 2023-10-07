@@ -87,6 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const { user, token } = response.data
 
       setCookie(undefined, 'mycurriculum.token', token, {
+        path: '/',
         maxAge: 60 * 60 * 1, // 1 hour
       })
 

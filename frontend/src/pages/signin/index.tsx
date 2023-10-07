@@ -10,7 +10,7 @@ import { AuthContext } from '@/src/contexts/AuthContext'
 import { useContext, useEffect } from 'react'
 import { GetServerSideProps } from 'next'
 import { destroyCookie, parseCookies } from 'nookies'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import SignUp from './SignUp'
 import ForgotPassword from './ForgotPassword'
 import Router from 'next/router'
@@ -86,9 +86,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   if (token) {
     try {
       const secret = process.env.CONFIG_AUTH_SECRET as string
-      jwt.verify(token, secret)
+      const { id: tokenUserId } = jwt.verify(token, secret) as JwtPayload
 
       return {
+        props: {
+          token: tokenUserId,
+        },
         redirect: {
           destination: '/curriculums',
           permanent: false,
@@ -101,7 +104,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      token: token || null,
+      token: null,
     },
   }
 }

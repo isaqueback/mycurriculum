@@ -8,9 +8,7 @@ module.exports = {
     await queryInterface.bulkInsert('users', [{
       email: process.env.ADMIN_EMAIL,
       fullname: process.env.ADMIN_FULLNAME,
-      date_of_birth: new Date(process.env.ADMIN_DATE_OF_BIRTH),
       password_hash: await bcrypt.hash(process.env.ADMIN_PASSWORD, 8),
-      gender: process.env.ADMIN_GENDER,
       created_at: new Date(),
       updated_at: new Date(),
     }], {});

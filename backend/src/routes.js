@@ -14,6 +14,7 @@ import { authUsersDestroy } from './app/middlewares/authUsers/destroy.js'
 import { authFilesCreate } from './app/middlewares/authFiles/create.js'
 import { authFilesIndex } from './app/middlewares/authFiles/index.js'
 import { authFilesShow } from './app/middlewares/authFiles/show.js'
+import { authFilesCount } from './app/middlewares/authFiles/count.js'
 import { authFilesDestroy } from './app/middlewares/authFiles/destroy.js'
 import { authFilesUpdate } from './app/middlewares/authFiles/update.js'
 import { authCurriculumsIndex } from './app/middlewares/authCurriculums/index.js'
@@ -40,8 +41,9 @@ routes.post('/users/reset-password/', authUsersResetPassword, users.resetPasswor
 routes.delete('/users/:id', authUsersDestroy, users.destroy)
 
 // Files
-routes.get('/users/:userId/files/:id', authFilesIndex, files.index)
+routes.get('/users/:userId/files', authFilesIndex, files.index)
 routes.get('/users/:userId/files', authFilesShow, files.show)
+routes.get('/users/:userId/files/count', authFilesCount, files.count)
 // Verificar se eu estou enviando um arquivo, posso estar enviando um json no corpo da requisição ao invés de arquivo
 routes.post('/users/:userId/files/:folderName', authFilesCreate, upload.single('file'), files.create)
 routes.put('/users/:userId/files/:id', authFilesUpdate, files.update)

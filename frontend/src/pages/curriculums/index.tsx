@@ -13,6 +13,7 @@ import {
   CurriculumContext,
   CurriculumType,
 } from '@/src/contexts/CurriculumContext'
+import ShowMoreButton from './ShowMoreButton'
 
 const searchFormSchema = z.object({
   search: z.string(),
@@ -58,7 +59,6 @@ export default function Curriculums({ tokenUserId, token }: CurriculumsProps) {
         setCurrentCurriculumBlock(nextBlock)
 
         setCurriculumBlocksLeft((state) => state - 1)
-        // console.log('entrei aqui e falta ', curriculumBlocksLeft, 'página')
       } catch (err) {
         // Não esquecer de ajeitar esse catch, mostrar um alert ao dar erro ao clicar no botão mostrar mais
         console.log('Error fetching more curriculums.')
@@ -132,9 +132,10 @@ export default function Curriculums({ tokenUserId, token }: CurriculumsProps) {
         ))}
       </div>
       {!!curriculumBlocksLeft && (
-        <button onClick={() => showMoreCurriculums(searchValue)}>
-          Mostrar mais
-        </button>
+        <ShowMoreButton
+          showMoreCurriculums={showMoreCurriculums}
+          searchValue={searchValue}
+        />
       )}
     </CurriculumsContainer>
   )

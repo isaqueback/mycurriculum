@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import { CurriculumContainer } from '@/src/styles/pages/curriculums/curriculum'
-import template1Illustration from '@/src/assets/illustrations/template-1.png'
+import template1Illustration from '@/src/assets/illustrations/template-1-example.png'
 import downloadIllustration from '@/src/assets/illustrations/download-simple.svg'
 import download2Illustration from '@/src/assets/illustrations/download-simple2.svg'
 import duplicateIllustration from '@/src/assets/illustrations/copy-simple.svg'

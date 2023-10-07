@@ -5,7 +5,7 @@ import Permission from "../models/Permission.js"
 import Mail from '../../lib/Mail.js'
 import * as Yup from 'yup'
 import { Op } from 'sequelize'
-import { parse, addHours } from 'date-fns'
+import { addHours } from 'date-fns'
 import jwt from 'jsonwebtoken'
 
 class UsersController {
@@ -37,17 +37,12 @@ class UsersController {
 
   async create(req, res) {
     try {
-      const { email, fullname, date_of_birth, gender, password, passwordConfirmation } = req.body
-      const newUser = { email, fullname, date_of_birth, gender, password }
+      const { email, fullname, password, passwordConfirmation } = req.body
+      const newUser = { email, fullname, password }
 
       const schema = Yup.object().shape({
         email: Yup.string().email().required(),
         fullname: Yup.string().required(),
-        date_of_birth: Yup.string().matches(
-          /^(?:(?:19|20)?\d{2}|[1-9]\d{0,3}|0{1,3}\d{0,2})\/(?:0?[1-9]|1[0-2]|0[1-9]|1[0-9]|2[0-9]|3[01])\/(?:0?[1-9]|[12]\d|3[01])$/,
-          'Invalid date format.'
-        ),
-        gender: Yup.string().oneOf(['male', 'female', 'other']),
         password: Yup.string().min(8).required(),
         passwordConfirmation: Yup.string().when('password', (password, field) => password ? field.required().oneOf([Yup.ref('password')]) : field)
       })
@@ -55,13 +50,6 @@ class UsersController {
       const userExists = await User.findOne({ where: { email } })
 
       if (userExists) return res.status(409).json({ error: 'User already exists.' })
-
-      let parsedDateOfBirth = date_of_birth
-      if (date_of_birth) {
-        const [year, month, day] = date_of_birth.split('/')
-        const formattedDateOfBirth = `${year.padStart(4, '0')}/${month.padStart(2, '0')}/${day.padStart(2, '0')}`
-        parsedDateOfBirth = parse(formattedDateOfBirth, 'yyyy/MM/dd', new Date(), { useAdditionalWeekYearTokens: false })
-      }
 
       const freeUserRole = await Role.findOne({
         where: {
@@ -76,7 +64,7 @@ class UsersController {
 
       const parseIntExpiresIn = parseInt(process.env.CONFIG_AUTH_EXPIRES_IN_2)
 
-      const token = jwt.sign({ user: { ...newUser, date_of_birth: parsedDateOfBirth }, userRoles: [freeUserRole.id], userPermissions: freeUserPermissionsIds }, process.env.CONFIG_AUTH_SECRET_2, { expiresIn: parseIntExpiresIn })
+      const token = jwt.sign({ user: { ...newUser }, userRoles: [freeUserRole.id], userPermissions: freeUserPermissionsIds }, process.env.CONFIG_AUTH_SECRET_2, { expiresIn: parseIntExpiresIn })
       const confirmationLink = `${process.env.SERVER_DOMAIN}${process.env.SERVER_PORT}/users/verify/${token}`
 
       await Mail.send({
@@ -119,15 +107,11 @@ class UsersController {
     try {
       const id = parseInt(req.params.id)
 
-      const { fullname, gender, date_of_birth, oldPassword, password, passwordConfirmation } = req.body
-      const updatedDate = { fullname, gender, date_of_birth, password }
+      const { fullname, oldPassword, password, passwordConfirmation } = req.body
+      const updatedDate = { fullname, password }
 
       const schema = Yup.object().shape({
         fullname: Yup.string(),
-        date_of_birth: Yup.string().matches(
-          /^(?:(?:19|20)?\d{2}|[1-9]\d{0,3}|0{1,3}\d{0,2})\/(?:0?[1-9]|1[0-2]|0[1-9]|1[0-9]|2[0-9]|3[01])\/(?:0?[1-9]|[12]\d|3[01])$/,
-          'Invalid date format.'
-        ),
         oldPassword: Yup.string().min(8),
         password: Yup.string().when('oldPassword', (oldPassword, field) => {
           oldPassword ? field.min(8).required() : field
@@ -137,13 +121,6 @@ class UsersController {
         })
       })
 
-      let parsedDateOfBirth = date_of_birth
-
-      if (date_of_birth) {
-        const [year, month, day] = date_of_birth.split('/')
-        const formattedDateOfBirth = `${year.padStart(4, '0')}/${month.padStart(2, '0')}/${day.padStart(2, '0')}`
-        parsedDateOfBirth = parse(formattedDateOfBirth, 'yyyy/MM/dd', new Date(), { useAdditionalWeekYearTokens: false })
-      }
 
       if (!(await schema.isValid({ ...updatedDate, oldPassword, passwordConfirmation }))) return res.status(401).json({ error: 'Error on validate schema.' })
 
@@ -157,7 +134,7 @@ class UsersController {
 
       if (oldPassword && ! await userToUpdate.checkPassword(oldPassword)) return res.status(401).json({ error: 'Password not match.' })
 
-      const updatedUser = await userToUpdate.update({ ...updatedDate, date_of_birth: parsedDateOfBirth })
+      const updatedUser = await userToUpdate.update(updatedDate)
 
       res.json(updatedUser)
     } catch (err) {

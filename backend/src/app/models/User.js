@@ -6,12 +6,10 @@ class User extends Model {
         super.init({
             email: Sequelize.STRING,
             fullname: Sequelize.STRING,
-            date_of_birth: Sequelize.DATE,
             password: Sequelize.VIRTUAL,
             password_hash: Sequelize.STRING,
             reset_password_token: Sequelize.STRING,
             reset_password_expires: Sequelize.DATE,
-            gender: Sequelize.ENUM('male', 'female', 'other'),
         }, {
             sequelize
         })

@@ -16,6 +16,7 @@ class File extends Model {
             size: Sequelize.INTEGER,
             key: Sequelize.STRING,
             url: Sequelize.STRING,
+            folder_name: Sequelize.STRING,
         }, {
             sequelize,
         })
